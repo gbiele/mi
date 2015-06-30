@@ -354,7 +354,12 @@ zeroinfl <- function(formula, data, subset, na.action, weights, offset,
     vc <- -solve(as.matrix(fit$hessian))
   } else {
     vc <- NULL
-    if(!all(is.finite(fit$hessian))) message("############ bad hessian ###############")
+    if(!all(is.finite(fit$hessian))) 
+      message("############ bad hessian, not finite ###############")
+    if (!is.positive.definite(as.matrix(fit$hessian))) 
+      message("############ bad hessian, not positive-definite ###############")
+    if (!is.positive.semi.definite(as.matrix(fit$hessian))) 
+      message("############ bad hessian, not positive-semi-definite ###############")
     test_vc <- -solve(as.matrix(fit$hessian))
   }
     if(dist == "negbin") {
