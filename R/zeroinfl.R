@@ -353,8 +353,9 @@ zeroinfl <- function(formula, data, subset, na.action, weights, offset,
   if(vcov){
     vc <- -solve(as.matrix(fit$hessian))
   } else {
-    vc = NULL
+    vc <- NULL
     if(!all(is.finite(fit$hessian))) message("############ bad hessian ###############")
+    test_vc <- -solve(as.matrix(fit$hessian))
   }
     if(dist == "negbin") {
       np <- kx + kz + 1
