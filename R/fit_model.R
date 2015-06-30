@@ -329,10 +329,10 @@ setMethod("fit_model", signature(y = "count", data = "missing_data.frame"), def 
                   X <- cbind(X, interaction = X * data@variables[[treatment]]@data)
                 }
               }
-              zinb_data = data.frame(cbind(y@data,X),row.names = 1:nrow(X))
+              zinb_data = data.frame(cbind(y@data,X[,-1]),row.names = 1:nrow(X))
               names(zinb_data) = c(y@variable_name,names(zinb_data)[-1])
-              f = as.formula(paste(y@variable_name," ~ -1 +",paste(names(zinb_data)[-1],collapse = " + ")))
-              return(zeroinfl(formula = f,data = zinb_data,dist = "negbin",link = "logit"))
+              mf = as.formula(paste(y@variable_name," ~ ",paste(names(zinb_data)[-1],collapse = " + ")))
+              return(zeroinfl(formula = mf,data = zinb_data,dist = "negbin",link = "logit"))
             })
 
 ## experiments
