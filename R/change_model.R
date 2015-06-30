@@ -56,6 +56,8 @@ setMethod("change_model", signature(data = "missing", y = "missing_variable", to
                              imputation_method = y@imputation_method, family = quasipoisson(link = "log")),
            "poisson" =  new("count", variable_name = y@variable_name, raw_data = y@raw_data, 
                             imputation_method = y@imputation_method, family = poisson(link = "log")),
+           "zinegbin" =  new("count", variable_name = y@variable_name, raw_data = y@raw_data, 
+                            imputation_method = y@imputation_method, family = negative.binomial(1,link = "log")),
            
            "linear" = new("continuous", variable_name = y@variable_name, raw_data = y@raw_data,
                           imputation_method = y@imputation_method, family = gaussian(link = "identity")),
