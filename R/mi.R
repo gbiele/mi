@@ -763,7 +763,6 @@ setMethod("mi", signature(y = "binary", model = "glm"), def =
 setOldClass("zeroinfl")
 setMethod("mi", signature(y = "count", model = "zeroinfl"), def = 
             function(y, model, s, ...) {
-              message("do imputation for zero inflated model ")
               if(y@n_drawn == 0) stop("'impute' should not have been called because there are no missing data")
               if(y@imputation_method == "ppd") {
                 X <- model$x$count
