@@ -28,6 +28,9 @@
       warning(paste(variable_name, ": cannot infer variable type when all values are NA, guessing 'irrelevant'"))
       type <- "irrelevant"
     }
+    else if ( sum((values[!is.na(values)] %% 1) == 0) == length(values[!is.na(values)]) & 
+              min(values,na.rm = T) >= 0 &
+              length(values) >= 8) type <- count
     else if(len == 1)             type <- "fixed"
     else if(grepl("^[[:punct:]]", 
                   variable_name)) type <- "irrelevant"
