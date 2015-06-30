@@ -316,12 +316,24 @@ setMethod("fit_model", signature(y = "proportion", data = "missing_data.frame"),
   })
 
 setMethod("fit_model", signature(y = "count", data = "missing_data.frame"), def =
-  function(y, data, s, warn, ...) {
-    to_drop <- data@index[[y@variable_name]]
-    if(length(to_drop)) X <- data@X[,-to_drop]
-    else X <- data@X[,]
-    return(.fit_continuous(y, data, s, warn, X)) # even though counts are not continuous
-  })
+            function(y, data, s, warn, ...) {
+              to_drop <- data@index[[y@variable_name]]
+              if(length(to_drop)) {
+                X <- data@X[,-to_drop]
+              } else {
+                X <- data@X[,]
+              }
+              if(is(data, "experiment_missing_data.frame")) {
+                treatment <- names(which(data@concept == "treatment"))
+                if(data@concept[y@variable_name] == "outcome") {
+                  X <- cbind(X, interaction = X * data@variables[[treatment]]@data)
+                }
+              }
+              zinb_data = data.frame(cbind(y@data,X),row.names = 1:nrow(X))
+              names(zinb_data) = c(y@variable_name,names(zinb_data)[-1])
+              f = as.formula(paste(y@variable_name," ~ -1 +",paste(names(zinb_data)[-1],collapse = " + ")))
+              return(zeroinfl(formula = f,data = zinb_data,dist = "negbin",link = "logit"))
+            })
 
 ## experiments
 setMethod("fit_model", signature(y = "missing_variable", data = "experiment_missing_data.frame"), def =

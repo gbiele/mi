@@ -180,13 +180,13 @@ setMethod("mi", signature(y = "missing_data.frame", model = "missing"), def =
     }
     else {
       mdfs <- parallel::parLapply(cl, X = as.list(1:n.chains),
-                        fun = function(i) .mi(i, y, verbose, s_start, s_end,
-                                              ProcStart, max.minutes, parallel, save_models))
+                                  fun = function(i) .mi(i, y, verbose, s_start, s_end,
+                                                        ProcStart, max.minutes, parallel, save_models))
     }
-#     
-#     else mdfs <- mclapply(as.list(1:n.chains),
-#                           FUN = function(i) .mi(i, y, verbose, s_start, s_end,
-#                                                 ProcStart, max.minutes, parallel, save_models))
+    #     
+    #     else mdfs <- mclapply(as.list(1:n.chains),
+    #                           FUN = function(i) .mi(i, y, verbose, s_start, s_end,
+    #                                                 ProcStart, max.minutes, parallel, save_models))
     
     
     names(mdfs) <- paste("chain", 1:length(mdfs), sep = ":")
@@ -759,6 +759,41 @@ setMethod("mi", signature(y = "binary", model = "glm"), def =
     y@imputations[s,] <- draws
     return(y)
   })
+
+setOldClass("count")
+setMethod("mi", signature(y = "count", model = "zeroinfl"), def = 
+            function(y, model, s, ...) {
+              if(y@n_drawn == 0) stop("'impute' should not have been called because there are no missing data")
+              if(y@imputation_method == "ppd") {
+                X <- out$x$count
+                Z <-out$x$zero
+                size <- out$theta
+                mu <- exp(X %*% model$coefficients$count)[,1]
+                phi <- model$linkinv(Z %*% model$coefficients$zero)[,1]
+                draws <-rnbinom( y@n_total,mu = mu, size = size)
+                draws[runif(y@n_total) < phi] <- 0
+                draws <- draws[y@which_drawn]
+              }
+              else if(y@imputation_method == "pmm") {
+                X <- out$x$count
+                Z <-out$x$zero
+                size <- out$theta
+                # take mu of negative binomail as eta
+                eta <- exp(X %*% model$coefficients$count)[,1] 
+                draws <- .pmm(y,eta)
+                draws <- draws[y@which_drawn]
+              }
+              else if(y@imputation_method == "median") stop("'median' is currenttly not a supported 'imputation_method' for count variables")
+              else if(y@imputation_method == "mode") stop("'mode' is currenttly not a supported 'imputation_method' for count variables")
+              else if(y@imputation_method == "mean") draws <- predict(model, type = "response")[y@which_drawn]
+              else if(y@imputation_method == "expectation") stop("'expectation' is not a supported 'imputation_method' for count variables")
+              else stop("'imputation_method' not recognized")
+              
+              draws <- as.integer(draws)
+              y@data[y@which_drawn] <- draws
+              y@imputations[s,] <- draws
+              return(y)
+            })
 
 setOldClass("clogit")
 setMethod("mi", signature(y = "grouped-binary", model = "clogit"), def = 
