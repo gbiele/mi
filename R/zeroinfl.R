@@ -360,7 +360,6 @@ zeroinfl <- function(formula, data, subset, na.action, weights, offset,
       message("############ bad hessian, not positive-definite ###############")
     if (!is.positive.semi.definite(as.matrix(fit$hessian))) 
       message("############ bad hessian, not positive-semi-definite ###############")
-    test_vc <- -solve(as.matrix(fit$hessian))
   }
     if(dist == "negbin") {
       np <- kx + kz + 1
