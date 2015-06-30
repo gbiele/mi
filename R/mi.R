@@ -760,7 +760,7 @@ setMethod("mi", signature(y = "binary", model = "glm"), def =
     return(y)
   })
 
-setOldClass("count")
+setOldClass("zeroinfl")
 setMethod("mi", signature(y = "count", model = "zeroinfl"), def = 
             function(y, model, s, ...) {
               if(y@n_drawn == 0) stop("'impute' should not have been called because there are no missing data")
