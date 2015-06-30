@@ -2,7 +2,7 @@ zeroinfl <- function(formula, data, subset, na.action, weights, offset,
                      dist = c("poisson", "negbin", "geometric"),
                      link = c("logit", "probit", "cloglog", "cauchit", "log"),
                      control = zeroinfl.control(...),
-                     model = TRUE, y = TRUE, x = FALSE, vcov = FALSE, ...)
+                     model = TRUE, y = TRUE, x = FALSE, ...)
 {
   ## set up likelihood
   ziPoisson <- function(parms) {
@@ -350,28 +350,27 @@ zeroinfl <- function(formula, data, subset, na.action, weights, offset,
   coefz <- fit$par[(kx+1):(kx+kz)]
   names(coefz) <- names(start$zero) <- colnames(Z)
   
-  if(vcov){
-    vc <- -solve(as.matrix(fit$hessian))
-  } else {
-    vc <- NULL
-    if(!all(is.finite(fit$hessian))) 
-      message("############ bad hessian, not finite ###############")
-    if (!is.positive.definite(as.matrix(fit$hessian))) 
-      message("############ bad hessian, not positive-definite ###############")
-    if (!is.positive.semi.definite(as.matrix(fit$hessian))) 
-      message("############ bad hessian, not positive-semi-definite ###############")
-  }
+  vc = tryCatch({-solve(as.matrix(fit$hessian))},
+                error = function(err) {
+                  # could not calculate variance-covariance martix
+                  # error handler picks up where error was generated
+                  print(paste("MY_ERROR:  ",err))
+                  return(matrix(NA,
+                                ncol = ncol(as.matrix(fit$hessian)),
+                                nrow = nrow(as.matrix(fit$hessian))))
+                })
+  
     if(dist == "negbin") {
       np <- kx + kz + 1
       theta <- as.vector(exp(fit$par[np]))
       SE.logtheta <- as.vector(sqrt(diag(vc)[np]))
-      if(vcov) vc <- vc[-np, -np, drop = FALSE]
+      vc <- vc[-np, -np, drop = FALSE]
     } else {
       theta <- NULL
       SE.logtheta <- NULL
     }
-  if(vcov) colnames(vc) <- rownames(vc) <- c(paste("count", colnames(X), sep = "_"),
-                                             paste("zero",  colnames(Z), sep = "_"))
+  colnames(vc) <- rownames(vc) <- c(paste("count", colnames(X), sep = "_"),
+                                    paste("zero",  colnames(Z), sep = "_"))
   
   ## fitted and residuals
   mu <- exp(X %*% coefc + offsetx)[,1]
