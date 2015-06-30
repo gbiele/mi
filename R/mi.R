@@ -765,9 +765,9 @@ setMethod("mi", signature(y = "count", model = "zeroinfl"), def =
             function(y, model, s, ...) {
               if(y@n_drawn == 0) stop("'impute' should not have been called because there are no missing data")
               if(y@imputation_method == "ppd") {
-                X <- out$x$count
-                Z <-out$x$zero
-                size <- out$theta
+                X <- model$x$count
+                Z <-model$x$zero
+                size <- model$theta
                 mu <- exp(X %*% model$coefficients$count)[,1]
                 phi <- model$linkinv(Z %*% model$coefficients$zero)[,1]
                 draws <-rnbinom( y@n_total,mu = mu, size = size)
@@ -775,9 +775,9 @@ setMethod("mi", signature(y = "count", model = "zeroinfl"), def =
                 draws <- draws[y@which_drawn]
               }
               else if(y@imputation_method == "pmm") {
-                X <- out$x$count
-                Z <-out$x$zero
-                size <- out$theta
+                X <- model$x$count
+                Z <-model$x$zero
+                size <- model$theta
                 # take mu of negative binomail as eta
                 eta <- exp(X %*% model$coefficients$count)[,1] 
                 draws <- .pmm(y,eta)
