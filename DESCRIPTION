@@ -10,7 +10,7 @@ Authors@R: c(person("Andrew", "Gelman", email = "gelman@stat.columbia.edu", role
              person("Maria", "Pittau", email = "grazia@stat.columbia.edu", role = "ctb"), 
              person("Ben", "Goodrich", email = "benjamin.goodrich@columbia.edu", role = c("cre", "aut")), 
              person("Yajuan", "Si", email = "sophie2012@gmail.com", role = "ctb"),
-             person("Jon", "Kropko", email = "jkropko@gmail.com", role = "aut"))
+             person("Jon", "Kropko", email = "jkropko@gmail.com", role = "aut"),
              person("Guido", "Biele", email = "guido.biele@neuro-cognition.org", role = "aut"))
 Description: The mi package provides functions for data manipulation, imputing missing values in an approximate Bayesian framework, diagnostics of the models used to generate the imputations, confidence-building mechanisms to validate some of the assumptions of the imputation algorithm, and functions to analyze multiply imputed data sets with the appropriate degree of sampling uncertainty.
 VignetteBuilder: knitr
@@ -29,7 +29,7 @@ Author: Andrew Gelman [ctb],
   Maria Pittau [ctb],
   Ben Goodrich [cre, aut],
   Yajuan Si [ctb],
-  Jon Kropko [aut]
+  Jon Kropko [aut],
   Guido Biele [aut]
 Maintainer: Ben Goodrich <benjamin.goodrich@columbia.edu>
 NeedsCompilation: no
