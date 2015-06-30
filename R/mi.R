@@ -157,6 +157,19 @@ setMethod("mi", signature(y = "missing_data.frame", model = "missing"), def =
       on.exit(parallel::stopCluster(cl))
     }
 
+    if(is.logical(parallel) && parallel) {
+      cores <- getOption("mc.cores", 2L)
+      cl <- parallel::makeCluster(cores, outfile = "")
+      on.exit(parallel::stopCluster(cl))
+    } else if (is(parallel, "cluster")) {
+      cl = parallel
+      parallel = T
+    } else if ( !is.logical(parallel) && parallel%%1 == 0){
+      cl <- parallel::makeCluster(parallel, outfile = "")
+      on.exit(parallel::stopCluster(cl))
+      parallel = T
+    }
+    
     if(!parallel) {
       mdfs <- vector("list", n.chains)
       for(i in seq_along(mdfs)) {
