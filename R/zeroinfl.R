@@ -354,7 +354,7 @@ zeroinfl <- function(formula, data, subset, na.action, weights, offset,
                 error = function(err) {
                   # could not calculate variance-covariance martix
                   # error handler picks up where error was generated
-                  message(paste("error when using zeroinfl for",colnames(data[,1])))
+                  message(paste("error when using zeroinfl for",paste(ff)[[2]]))
                   message(paste("MY_ERROR:  ",err))
                   return(matrix(NA,
                                 ncol = ncol(as.matrix(fit$hessian)),
