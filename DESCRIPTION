@@ -21,7 +21,7 @@ Suggests: betareg, lattice, knitr, MASS, nnet, parallel, sn, survival,
 URL: http://www.stat.columbia.edu/~gelman/
 License: GPL (>= 2)
 LazyLoad: yes
-Packaged: 2015-07-01:18:42 UTC; biele
+Packaged: 2015-07-01:19:27 UTC; biele
 Author: Andrew Gelman [ctb],
   Jennifer Hill [ctb],
   Yu-Sung Su [aut],
