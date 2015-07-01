@@ -286,9 +286,9 @@ zeroinfl <- function(formula, data, subset, na.action, weights, offset,
       while(abs((ll_old - ll_new)/ll_old) > control$reltol) {
         ll_old <- ll_new
         model_count <- suppressWarnings(glm.fit(X, Y, weights = weights * (1-probi),
-	  offset = offsetx, family = MASS::negative.binomial(1), start = start$count))
+                                                offset = offsetx, family = MASS::negative.binomial(1), start = start$count))
         model_zero <- suppressWarnings(glm.fit(Z, probi, weights = weights,
-	  offset = offsetz, family = binomial(link = linkstr), start = start$zero))
+                                               offset = offsetz, family = binomial(link = linkstr), start = start$zero))
         start <- list(count = model_count$coefficients, zero = model_zero$coefficients)
         mui <- model_count$fitted
         probi <- model_zero$fitted
@@ -317,9 +317,9 @@ zeroinfl <- function(formula, data, subset, na.action, weights, offset,
       while(abs((ll_old - ll_new)/ll_old) > control$reltol) {
         ll_old <- ll_new
         model_count <- suppressWarnings(glm.nb(Y ~ 0 + X + offset(offset), weights = weights * (1-probi),
-	  start = start$count, init.theta = start$theta))
+                                               start = start$count, init.theta = start$theta))
         model_zero <- suppressWarnings(glm.fit(Z, probi, weights = weights, offset = offsetz,
-	  family = binomial(link = linkstr), start = start$zero))
+                                               family = binomial(link = linkstr), start = start$zero))
         start <- list(count = model_count$coefficients, zero = model_zero$coefficients, theta = model_count$theta)
         mui <- model_count$fitted
         probi <- model_zero$fitted
@@ -354,12 +354,13 @@ zeroinfl <- function(formula, data, subset, na.action, weights, offset,
                 error = function(err) {
                   # could not calculate variance-covariance martix
                   # error handler picks up where error was generated
-                  print(paste("MY_ERROR:  ",err))
+                  message(paste("MY_ERROR:  ",err))
                   return(matrix(NA,
                                 ncol = ncol(as.matrix(fit$hessian)),
                                 nrow = nrow(as.matrix(fit$hessian))))
                 })
-  
+  bad_hessian = F
+  if (any(is.na(vc))) {bad_hessian = T}
     if(dist == "negbin") {
       np <- kx + kz + 1
       theta <- as.vector(exp(fit$par[np]))
@@ -406,7 +407,8 @@ zeroinfl <- function(formula, data, subset, na.action, weights, offset,
     call = cl,
     formula = ff,
     levels = .getXlevels(mt, mf),
-    contrasts = list(count = attr(X, "contrasts"), zero = attr(Z, "contrasts"))
+    contrasts = list(count = attr(X, "contrasts"), zero = attr(Z, "contrasts")),
+    bad_hessian = bad_hessian
   )
   if(model) rval$model <- mf
   if(y) rval$y <- Y

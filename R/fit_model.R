@@ -332,7 +332,9 @@ setMethod("fit_model", signature(y = "count", data = "missing_data.frame"), def 
               zinb_data = data.frame(cbind(y@data,X[,-1]),row.names = 1:nrow(X))
               names(zinb_data) = c(y@variable_name,names(zinb_data)[-1])
               mf = as.formula(paste(y@variable_name," ~ ",paste(names(zinb_data)[-1],collapse = " + ")))
-              return(zeroinfl(formula = mf,data = zinb_data,dist = "negbin",link = "logit",x = T))
+              out = zeroinfl(formula = mf,data = zinb_data,dist = "negbin",link = "logit",x = T)
+              if (out$bad_hessian) message(paste("problem with estimating zeroinfl model for",y@variable_name))
+              return(out)
             })
 
 ## experiments
