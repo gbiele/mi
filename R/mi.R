@@ -790,6 +790,10 @@ setMethod("mi", signature(y = "count", model = "zeroinfl"), def =
               else stop("'imputation_method' not recognized")
               
               draws <- as.integer(draws)
+              if (any(is.na(draws))) {
+                message("NA found when imputing count data modeled with zeroinfl")
+                draws[is.na(draws)] = as.numeric(mean(draws,na.rm = T))
+              }
               y@data[y@which_drawn] <- draws
               y@imputations[s,] <- draws
               return(y)
