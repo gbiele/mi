@@ -408,7 +408,6 @@ zeroinfl <- function(formula, data, subset, na.action, weights, offset,
     formula = ff,
     levels = .getXlevels(mt, mf),
     contrasts = list(count = attr(X, "contrasts"), zero = attr(Z, "contrasts")),
-    bad_hessian = bad_hessian
   )
   if(model) rval$model <- mf
   if(y) rval$y <- Y
