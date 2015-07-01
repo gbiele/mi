@@ -407,7 +407,7 @@ zeroinfl <- function(formula, data, subset, na.action, weights, offset,
     call = cl,
     formula = ff,
     levels = .getXlevels(mt, mf),
-    contrasts = list(count = attr(X, "contrasts"), zero = attr(Z, "contrasts")),
+    contrasts = list(count = attr(X, "contrasts"), zero = attr(Z, "contrasts"))
   )
   if(model) rval$model <- mf
   if(y) rval$y <- Y
