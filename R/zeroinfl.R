@@ -354,13 +354,13 @@ zeroinfl <- function(formula, data, subset, na.action, weights, offset,
                 error = function(err) {
                   # could not calculate variance-covariance martix
                   # error handler picks up where error was generated
+                  message(paste("error when using zeroinfl for",colnames(data[,1])))
                   message(paste("MY_ERROR:  ",err))
                   return(matrix(NA,
                                 ncol = ncol(as.matrix(fit$hessian)),
                                 nrow = nrow(as.matrix(fit$hessian))))
                 })
-  bad_hessian = F
-  if (any(is.na(vc))) {bad_hessian = T}
+
     if(dist == "negbin") {
       np <- kx + kz + 1
       theta <- as.vector(exp(fit$par[np]))
