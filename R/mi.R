@@ -792,7 +792,7 @@ setMethod("mi", signature(y = "count", model = "zeroinfl"), def =
               draws <- as.integer(draws)
               if (any(is.na(draws))) {
                 message("NA found when imputing count data modeled with zeroinfl")
-                draws[is.na(draws)] = as.numeric(mean(draws,na.rm = T))
+                draws[is.na(draws)] = as.integer(round(mean(draws,na.rm = T)))
               }
               y@data[y@which_drawn] <- draws
               y@imputations[s,] <- draws
