@@ -773,6 +773,14 @@ setMethod("mi", signature(y = "count", model = "zeroinfl"), def =
                 draws <-rnbinom( y@n_total,mu = mu, size = size)
                 draws[runif(y@n_total) < phi] <- 0
                 draws <- draws[y@which_drawn]
+                
+                tmp_max = (2*max(y@data[y@which_obs]))
+                if (max(draws) > tmp_max) {
+                  message("used pmm to replace large imputation values from zeroinfl")
+                  pmm.draws <- .pmm(y,mu)[,1]
+                  draws[draws > tmp_max] = pmm.draws[draws > tmp_max]
+                }
+                
               }
               else if(y@imputation_method == "pmm") {
                 X <- model$x$count
@@ -780,8 +788,7 @@ setMethod("mi", signature(y = "count", model = "zeroinfl"), def =
                 size <- model$theta
                 # take mu of negative binomail as eta
                 eta <- exp(X %*% model$coefficients$count)[,1] 
-                draws <- .pmm(y,eta)
-                draws <- draws[y@which_drawn]
+                draws <- .pmm(y,eta)[,1]
               }
               else if(y@imputation_method == "median") stop("'median' is currenttly not a supported 'imputation_method' for count variables")
               else if(y@imputation_method == "mode") stop("'mode' is currenttly not a supported 'imputation_method' for count variables")
@@ -792,7 +799,6 @@ setMethod("mi", signature(y = "count", model = "zeroinfl"), def =
               draws <- as.integer(draws)
               if (any(is.na(draws))) {
                 message("NA found when imputing count data modeled with zeroinfl")
-                stop()
                 draws[is.na(draws)] = as.integer(round(mean(draws,na.rm = T)))
               }
               y@data[y@which_drawn] <- draws
