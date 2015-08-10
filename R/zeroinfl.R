@@ -1,3 +1,6 @@
+# This is a modified version of the 
+# zeroinfl.R function from the package pscl 1.4.9.
+# https://cran.r-project.org/web/packages/pscl
 zeroinfl <- function(formula, data, subset, na.action, weights, offset,
                      dist = c("poisson", "negbin", "geometric"),
                      link = c("logit", "probit", "cloglog", "cauchit", "log"),
