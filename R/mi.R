@@ -239,7 +239,8 @@ setMethod("mi", signature(y = "mi", model = "missing"),
             for(i in 1:n.chains) {
               y <- mdfs[[i]]
               if(TRUE) y@variables <- lapply(y@variables, FUN = function(x) {                
-                if(x@all_obs & is(x, "irrelevant")) return(x)
+                if(x@all_obs | is(x, "irrelevant")) return(x)
+                # if(x@all_obs & is(x, "irrelevant")) return(x) # original version
                   x@imputations <- rbind(x@imputations, matrix(NA_integer_, n.iter, x@n_drawn))
                   x@parameters  <- rbind(x@parameters,  matrix(NA_real_, n.iter, ncol(x@parameters)))
                   if(is(x, "semi-continuous")) {
