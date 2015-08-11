@@ -100,7 +100,7 @@ setAs(from = "missing_data.frame", to = "matrix", def =
     if(is(y, "count")) {
       if(fam == "quasipoisson" && link == "log") return("qpoisson")
       else if(fam == "poisson" && link == "log") return("poisson")
-      else if(fam == "negative.binomial" && link == "log") return("zinegbin")
+      else if(fam == "negative.binomial" && link == "log") return("zeroinfl")
       else return("****")
     }
     else if(is(y, "binary")) {
