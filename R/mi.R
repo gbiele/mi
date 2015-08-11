@@ -775,7 +775,7 @@ setMethod("mi", signature(y = "count", model = "zeroinfl"), def =
                 draws[runif(y@n_total) < phi] <- 0
                 draws <- draws[y@which_drawn]
                 
-                tmp_max = (2*max(y@data[y@which_obs]))
+                tmp_max = (1.25*max(y@data[y@which_obs]))
                 if (max(draws) > tmp_max) {
                   message("used pmm to replace large imputation values from zeroinfl")
                   pmm.draws <- .pmm(y,mu)[,1]
