@@ -488,7 +488,7 @@ setClass("count", representation("missing_variable"),
          prototype(
            imputation_method = c("ppd", "pmm", "mean", "median", "expectation", "mcar", NA_character_),
            family = quasipoisson(),
-           known_families = c("quasipoisson", "poisson"),
+           known_families = c("quasipoisson", "poisson","negative.binomial"),
            known_links = c("log", "identity", "sqrt")
            ),
          validity = function(object) {
