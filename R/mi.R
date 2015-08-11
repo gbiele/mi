@@ -768,7 +768,7 @@ setMethod("mi", signature(y = "count", model = "zeroinfl"), def =
               if ( sum(is.na(model[["vcov"]])) == nrow(model[["vcov"]])*ncol(model[["vcov"]]) & y@imputation_method == "ppd") {
                 message(paste("fall back to use pmm as imputation method due to problems with vcov",y@variable_name))
                 back2ppd = T
-                y@imputation_method = pmm
+                y@imputation_method = "pmm"
               }
               if(y@n_drawn == 0) stop("'impute' should not have been called because there are no missing data")
               if(y@imputation_method == "ppd") {
@@ -794,7 +794,7 @@ setMethod("mi", signature(y = "count", model = "zeroinfl"), def =
                 Z <-model$x$zero
                 size <- model$theta
                 # take mu of negative binomail as eta
-                eta <- exp(X %*% model$coefficients$count)[,1] 
+                eta <- exp(X %*% model$coefficients$count)[,1]
                 draws <- .pmm(y,eta)[,1]
               }
               else if(y@imputation_method == "median") stop("'median' is currenttly not a supported 'imputation_method' for count variables")
@@ -810,6 +810,7 @@ setMethod("mi", signature(y = "count", model = "zeroinfl"), def =
               }
               y@data[y@which_drawn] <- draws
               y@imputations[s,] <- draws
+              if(back2ppd) y@imputation_method = "ppd"
               return(y)
             })
 
