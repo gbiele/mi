@@ -262,7 +262,7 @@ is.method_in_mi <-
   function(y) {
     if(!is(y, "categorical")) stop("must be a categorical variable")
     if(is(y, "binary")) out <- as.matrix(as.integer(y@data == 1))
-    else if (is(x,"ordered-categorical")) {
+    else if (is(y,"ordered-categorical")) {
       out = cbind(y@data,y@data^2)
     } else {
       levels <- sort(unique(y@data))
