@@ -766,7 +766,7 @@ setMethod("mi", signature(y = "count", model = "zeroinfl"), def =
             function(y, model, s, ...) {
               back2ppd = F
               if ( sum(is.na(model[["vcov"]])) == nrow(model[["vcov"]])*ncol(model[["vcov"]]) & y@imputation_method == "ppd") {
-                message(paste("fall back to use pmm as imputation method due to problems with vcov",y@variable_name))
+                message(paste("fall back to use pmm as imputation method due to problems with vcov for: ",y@variable_name))
                 back2ppd = T
                 y@imputation_method = "pmm"
               }
