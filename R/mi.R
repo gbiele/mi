@@ -764,6 +764,12 @@ setMethod("mi", signature(y = "binary", model = "glm"), def =
 setOldClass("zeroinfl")
 setMethod("mi", signature(y = "count", model = "zeroinfl"), def = 
             function(y, model, s, ...) {
+              back2ppd = F
+              if ( sum(is.na(model[["vcov"]])) == nrow(model[["vcov"]])*ncol(model[["vcov"]]) & y@imputation_method == "ppd") {
+                message(paste("fall back to use pmm as imputation method due to problems with vcov",y@variable_name))
+                back2ppd = T
+                y@imputation_method = pmm
+              }
               if(y@n_drawn == 0) stop("'impute' should not have been called because there are no missing data")
               if(y@imputation_method == "ppd") {
                 X <- model$x$count
