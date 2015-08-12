@@ -245,6 +245,7 @@ zeroinfl <- function(formula, data, subset, na.action, weights, offset,
     if(control$trace) cat("generating starting values...")
     model_count <- glm.fit(X, Y, family = poisson(), weights = weights, offset = offsetx)
     model_zero <- glm.fit(Z, as.integer(Y0), weights = weights, family = binomial(link = linkstr), offset = offsetz)
+    #if(max(abs(zero = model_zero$coefficients)) > 5) model_zero$coefficients[abs(zero = model_zero$coefficients) > 5] = 0
     start <- list(count = model_count$coefficients, zero = model_zero$coefficients)
     if(dist == "negbin") start$theta <- 1
 
