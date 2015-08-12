@@ -444,6 +444,7 @@ setMethod("traceplot", signature(x = "mi_list"), def =
     traceplot(lapply(x, mi2BUGS, ...))
   })
 
+###### methods below should be for initial imputations, before models are run (GB 08/16) ##### 
 
 ## all the mi() methods below should return the missing_variable after imputing
 ## need to explicitly write out methods instead of doing poor man's S4
@@ -521,6 +522,7 @@ setMethod("mi", signature(y = "semi-continuous", model = "missing"), def =
 #   y@data[y@which_drawn] <- draws
 #   return(y)
 # })
+
 
 setMethod("mi", signature(y = "bounded-continuous", model = "missing"), def = 
   function(y) {
@@ -764,19 +766,25 @@ setMethod("mi", signature(y = "binary", model = "glm"), def =
 setOldClass("zeroinfl")
 setMethod("mi", signature(y = "count", model = "zeroinfl"), def = 
             function(y, model, s, ...) {
+              if(y@n_drawn == 0) stop("'impute' should not have been called because there are no missing data")
               back2ppd = F
               if ( sum(is.na(model[["vcov"]])) == nrow(model[["vcov"]])*ncol(model[["vcov"]]) & y@imputation_method == "ppd") {
                 message(paste("fall back to use pmm as imputation method due to problems with vcov for: ",y@variable_name))
                 back2ppd = T
                 y@imputation_method = "pmm"
               }
-              if(y@n_drawn == 0) stop("'impute' should not have been called because there are no missing data")
+              
               if(y@imputation_method == "ppd") {
                 X <- model$x$count
                 Z <-model$x$zero
                 size <- model$theta
-                mu <- exp(X %*% model$coefficients$count)[,1]
-                phi <- model$linkinv(Z %*% model$coefficients$zero)[,1]
+                ev <- eigen(vcov(model), symmetric = TRUE)
+                parameters <- .draw_parameters(coef(model), ev)
+                count_coeffs = parameters[1:length(model$coefficients$count)]
+                zero_coeffs = parameters[(length(model$coefficients$count)+1):length(parameters)]
+                
+                mu <- exp(X %*% count_coeffs)[,1]
+                phi <- model$linkinv(Z %*% zero_coeffs)[,1]
                 draws <-rnbinom( y@n_total,mu = mu, size = size)
                 draws[runif(y@n_total) < phi] <- 0
                 draws <- draws[y@which_drawn]
@@ -793,8 +801,12 @@ setMethod("mi", signature(y = "count", model = "zeroinfl"), def =
                 X <- model$x$count
                 Z <-model$x$zero
                 size <- model$theta
-                # take mu of negative binomail as eta
-                eta <- exp(X %*% model$coefficients$count)[,1]
+                # take mu of negative binomial as eta
+                mu <- exp(X %*% model$coefficients$count)[,1]
+                phi <- model$linkinv(Z %*% model$coefficients$zero)[,1]
+                eta = mu
+                eta[runif(y@n_total) < phi] <- 0
+                
                 draws <- .pmm(y,eta)[,1]
               }
               else if(y@imputation_method == "median") stop("'median' is currenttly not a supported 'imputation_method' for count variables")
