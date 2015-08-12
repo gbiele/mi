@@ -1082,8 +1082,7 @@ setMethod("initialize", "missing_data.frame", def =
       start <- end + 1L
     }
     if(include_missingness) for(i in seq_along(index)) {
-      #nas <- is.na(mdf@variables[[i]]) # wrong (GB, August 2015)
-      nas <- is.na(mdf@variables[[names(index)[i]]])
+      nas <- is.na(.Object@variables[[i]])
       check <- apply(Z, 2, FUN = function(x) all(x == nas))
       index[[i]] <- c(index[[i]], which(check) + start - 1)
     }
