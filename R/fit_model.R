@@ -329,7 +329,7 @@ setMethod("fit_model", signature(y = "count", data = "missing_data.frame"), def 
                   X <- cbind(X, interaction = X * data@variables[[treatment]]@data)
                 }
               }
-              if (mdf@variables[["mALC.EFFUNITS"]]@family[["family"]] == "quasipoisson") {
+              if (y@family[["family"]] == "quasipoisson") {
                 return(.fit_continuous(y, data, s, warn, X))
               } else {
                 zinb_data = data.frame(cbind(y@data,X[,-1]),row.names = 1:nrow(X))
