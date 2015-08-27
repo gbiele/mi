@@ -329,10 +329,14 @@ setMethod("fit_model", signature(y = "count", data = "missing_data.frame"), def 
                   X <- cbind(X, interaction = X * data@variables[[treatment]]@data)
                 }
               }
-              zinb_data = data.frame(cbind(y@data,X[,-1]),row.names = 1:nrow(X))
-              names(zinb_data) = c(y@variable_name,names(zinb_data)[-1])
-              mf = as.formula(paste(y@variable_name," ~ ",paste(names(zinb_data)[-1],collapse = " + ")))
-              return(zeroinfl(formula = mf,data = zinb_data,dist = "negbin",link = "logit",x = T))
+              if (mdf@variables[["mALC.EFFUNITS"]]@family[["family"]] == "quasipoisson") {
+                return(.fit_continuous(y, data, s, warn, X))
+              } else {
+                zinb_data = data.frame(cbind(y@data,X[,-1]),row.names = 1:nrow(X))
+                names(zinb_data) = c(y@variable_name,names(zinb_data)[-1])
+                mf = as.formula(paste(y@variable_name," ~ ",paste(names(zinb_data)[-1],collapse = " + ")))
+                return(zeroinfl(formula = mf,data = zinb_data,dist = "negbin",link = "logit",x = T))
+              }
             })
 
 ## experiments
