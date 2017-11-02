@@ -4,7 +4,7 @@
 zeroinfl <- function(formula, data, subset, na.action, weights, offset,
                      dist = c("poisson", "negbin", "geometric"),
                      link = c("logit", "probit", "cloglog", "cauchit", "log"),
-                     control = zeroinfl.control(...),
+                     control = pscl::zeroinfl.control(...),
                      model = TRUE, y = TRUE, x = FALSE, ...)
 {
   ## set up likelihood
