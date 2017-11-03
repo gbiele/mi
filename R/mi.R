@@ -1023,6 +1023,7 @@ setMethod("mi", signature(y = "nonnegative-continuous", model = "glm"), def =
       shape1 <- mu * phi
       shape2 <- phi - shape1
       draws <- rbeta(y@n_drawn, shape1, shape2)
+      draws <- (mean(y@raw_data,na.rm = T)*100+.5)/101
     }
     else if(y@imputation_method == "pmm") {
       eta <- model$x %*% parameters[-length(parameters)]
